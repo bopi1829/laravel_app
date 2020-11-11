@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -13,7 +14,9 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        $articles = Article::all();
+
+        return view('articles.index', compact('articles'));
     }
 
     /**
@@ -23,7 +26,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        return view('articles.create');
     }
 
     /**
@@ -34,7 +37,16 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'content'=>'required'
+        ]);
+
+        $article = new Article([
+            'content'=>$request->get('content')
+        ]);
+        $article->save();
+
+        return redirect('/articles');
     }
 
     /**
@@ -45,7 +57,9 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        //
+        $article = Article::find($id);
+
+        return view('articles.show', ['article' => $article]);
     }
 
     /**
@@ -56,7 +70,9 @@ class ArticleController extends Controller
      */
     public function edit($id)
     {
-        //
+        $article = Article::find($id);
+
+        return view('articles.edit', compact('article'));
     }
 
     /**
@@ -68,7 +84,15 @@ class ArticleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'content'=>'required'
+        ]);        
+        
+        $article = Article::find($id);
+        $article->content = $request->get('content');
+        $article->save();
+
+        return redirect('/articles');
     }
 
     /**
@@ -79,6 +103,9 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $article = Article::find($id);
+        $article->delete();
+
+        return redirect('/articles');
     }
 }
